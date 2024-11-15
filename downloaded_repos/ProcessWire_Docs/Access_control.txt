@@ -1,0 +1,20 @@
+ProcessWire uses a role-based access control system (RBAC). Users are assigned to one or more roles, each role is assigned permissions, and roles are assigned to templates for access control of pages.
+Roles
+Roles are a way of grouping multiple users and assigning permissions to that group. They are the connection of both users and templates to permissions.
+Permissions
+Permissions represent a granular permission to access something or to perform some action. This page outlines permissions recognized by the core.
+Docs
+API reference
+Getting started
+Front-end
+Tutorials
+Selectors
+Modules & hooks
+Fields, types, input
+Access control
+Security
+Multi-language
+More topics
+Access control
+Roles
+Permissions
