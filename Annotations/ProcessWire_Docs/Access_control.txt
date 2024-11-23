@@ -1,4 +1,4 @@
-{#s (A: Collect, Use, Delete) (DT: Roles, Permission, Account information, App interactions, Timestamps) (P: Authenticate, Security, Functionality, Save) ProcessWire uses a role-based access control system (RBAC). Users are assigned to one or more roles, each role is assigned permissions, and roles are assigned to templates for access control of pages.
+ProcessWire uses a role-based access control system (RBAC). Users are assigned to one or more roles, each role is assigned permissions, and roles are assigned to templates for access control of pages.
 Roles
 Roles are a way of grouping multiple users and assigning permissions to that group. They are the connection of both users and templates to permissions.
 

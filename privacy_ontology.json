@@ -128,9 +128,6 @@
             "Synonyms":["Advertisement identifier", "ad identifiers"]
 
           },
-          "User ID": {
-            "Synonyms": []
-          }
         },
         "Browser": {},
         "Operating System": {
@@ -151,13 +148,13 @@
         "Cookies": {
           "Patterns": ["Protection-against-tracking"]
         },
-        "User IDs": {},
         "Web Beacons/Pixels": {},
         "Tags": {}
     },
     "Account Information": {
       "Patterns":["Who’s Listening", "Unusual-activities"],
       "Synonyms":["account credentials"],
+        "User id": {},
         "Username": {},
         "Password": {
           "Patterns":["Informed Secure Passwords"]
@@ -234,8 +231,11 @@
       "Accounts": {
           "Account Management": {
             "Patterns":["Informed Secure Passwords","Psuedonymous Identity"],
+            "Log in" : {},
+            "Log out" : {},
             "Account Open": {},
-            "Account Close": {}
+            "Account Close": {},
+            "Account Update": {}
         },
           "Personal Analytics" : {
             "Financial analysis" : {},
