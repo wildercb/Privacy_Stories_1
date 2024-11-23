@@ -1,4 +1,4 @@
-{#s (A: Collect, Use, Delete) (DT: Roles, Permission, Account information, App interactions, Timestamps) (P: Authenticate, Security, Functionality, Save) ProcessWire uses a role-based access control system (RBAC). Users are assigned to one or more roles, each role is assigned permissions, and roles are assigned to templates for access control of pages.
+ProcessWire uses a role-based access control system (RBAC). Users are assigned to one or more roles, each role is assigned permissions, and roles are assigned to templates for access control of pages.
 Roles
 Roles are a way of grouping multiple users and assigning permissions to that group. They are the connection of both users and templates to permissions.
 
@@ -237,4 +237,4 @@ If using this permission, be sure to add it to the user roles that DO need edit 
 Also note that when this permission is present in your system, a user must have it in order to create or delete pages (just like with the page-edit-lang-default permission). That's because when a user doesn't have this permission, they don't have access to modify non-multi-language fields like Template and Parent, among others. Chances are, this behavior is exactly what you'd want for a translation-only role.
 
 lang-edit
-In ProcessWire 2.6.23 (2.7) and newer you can add this permission to give users access to the language tools in Setup > Languages. This is largely useful for performing translations of static files like when creating language packs, or when translating phrases in your site template files. If you want to limit access to only a specific language, install the page-edit-lang-[name] permissions as described above, and ProcessWire will also consider these for access to language pages in Setup > Languages. \}
+In ProcessWire 2.6.23 (2.7) and newer you can add this permission to give users access to the language tools in Setup > Languages. This is largely useful for performing translations of static files like when creating language packs, or when translating phrases in your site template files. If you want to limit access to only a specific language, install the page-edit-lang-[name] permissions as described above, and ProcessWire will also consider these for access to language pages in Setup > Languages.
