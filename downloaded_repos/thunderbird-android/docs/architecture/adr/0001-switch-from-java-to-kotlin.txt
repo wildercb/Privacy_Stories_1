@@ -6,7 +6,7 @@
 
 - **Accepted**
 
-## Context
+## Context 
 
 We've been using Java as our primary language for Android development. While Java has served us well, it has certain
 limitations in terms of null safety, verbosity, functional programming, and more. Kotlin, officially supported by
