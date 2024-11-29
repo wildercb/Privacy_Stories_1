@@ -1,69 +1,62 @@
-import openai
-from transformers import AutoTokenizer, AutoModelForCausalLM
+import aisuite as ai
 import json
 from typing import Dict, List, Union
-import tiktoken  # Library for token counting with OpenAI models
-from secrets_file import openai_api_key
 import csv
-import torch
-from prompt_templates import load_privacy_ontology, count_tokens, create_annotation_prompt
+from prompt_templates import load_privacy_ontology, create_annotation_prompt
+from text_processing import process_input
 
-def send_prompt(prompt: str, model_name: str, use_openai: bool = True, **kwargs):
-    if use_openai:
-        # Set OpenAI API key
-        openai.api_key = openai_api_key
-        response = openai.ChatCompletion.create(
-            model=model_name,
-            messages=[{"role": "system", "content": prompt}],
-            temperature=kwargs.get('temperature', 0),
-            max_tokens=kwargs.get('max_tokens', 1500)
-        )
-        output = response.choices[0].message.content.strip()
-    else:
-        # Use Hugging Face Mamba 2 model
-        from transformers import AutoTokenizer, AutoModelForCausalLM
+def send_prompt(prompt: str, model_name: str, use_provider: str = "openai", **kwargs):
+    """
+    Send a prompt to an AI model using aisuite's unified interface
+    
+    Args:
+        prompt (str): The prompt to send
+        model_name (str): The full model identifier (e.g., 'openai:gpt-4', 'anthropic:claude-3-5-sonnet')
+        use_provider (str): The AI provider to use (default is OpenAI)
+        **kwargs: Additional parameters i.e., temperature, max_tokens
+    
+    Returns:
+        str: The AI-generated response
+    """
+    # Initialize aisuite client
+    client = ai.Client()
+    
+    # Prepare messages in the standard chat format
+    messages = [{"role": "system", "content": prompt}]
+    
+    # Create chat completion
+    response = client.chat.completions.create(
+        model=model_name,
+        messages=messages,
+        temperature=kwargs.get('temperature', 0),
+        max_tokens=kwargs.get('max_tokens', 1500)
+    )
+    
+    # Extract and return the response content
+    return response.choices[0].message.content.strip()
 
-        # Load tokenizer with specific settings
-        tokenizer = AutoTokenizer.from_pretrained(model_name, revision='refs/pr/9', from_slow=True, legacy=False)
-        tokenizer.pad_token = tokenizer.eos_token
-        tokenizer.padding_side = "left"
-
-        # Load model
-        model = AutoModelForCausalLM.from_pretrained(model_name, revision='refs/pr/9')
-        model.eval()
-        device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-        model.to(device)
-
-        # Encode prompt
-        inputs = tokenizer(prompt, return_tensors="pt", padding=True)
-        inputs = {key: value.to(device) for key, value in inputs.items()}
-
-        # Generate output
-        input_length = inputs['input_ids'].shape[1]
-        max_length = input_length + kwargs.get('max_tokens', 150)
-        outputs = model.generate(
-            **inputs,
-            max_length=max_length,
-            temperature=kwargs.get('temperature', 0.7),
-            num_return_sequences=1,
-            no_repeat_ngram_size=2,
-            early_stopping=True,
-            pad_token_id=tokenizer.eos_token_id
-        )
-
-        # Decode output
-        full_output = tokenizer.decode(outputs[0], skip_special_tokens=True)
-        # Extract generated text after the prompt
-        output = full_output[len(prompt):].strip()
-    return output
-
-# Function to create a few-shot prompt with multiple example files and annotate a new target file
-def annotate_with_few_shot_prompt(example_directory: str, target_file_path: str, ontology_path: str, model_name: str = "gpt-4", use_openai: bool = True):
+def annotate_with_few_shot_prompt(
+    example_directory: str, 
+    target_file_path: str, 
+    ontology_path: str, 
+    model_name: str = "openai:gpt-4", 
+    use_provider: str = "openai"
+):
+    """
+    Annotate a file using few-shot prompting with AISuite
+    
+    Args:
+        example_directory (str): Directory containing example files
+        target_file_path (str): Path to the target file to annotate
+        ontology_path (str): Path to the privacy ontology
+        model_name (str): The full model identifier
+        use_provider (str): The AI provider to use
+    """
     # Load the privacy ontology
     ontology = load_privacy_ontology(ontology_path)
     
     # Load all example files in the directory
-    example_files = text_processing.process_input(example_directory)
+    example_files = process_input(example_directory)
     
     # Load the content of the target text file
     with open(target_file_path, 'r') as target_file:
@@ -74,21 +67,14 @@ def annotate_with_few_shot_prompt(example_directory: str, target_file_path: str,
     for example_file in example_files:
         prompt += create_annotation_prompt(example_file, target_text, ontology) + "\n\n"
     
-    # Print prompt and token count for review
+    # Print prompt
     print(prompt)
-    if use_openai:
-        token_count = count_tokens(prompt)
-    else:
-        # Load tokenizer for Hugging Face model
-        tokenizer = AutoTokenizer.from_pretrained(model_name, revision='refs/pr/9', from_slow=True, legacy=False)
-        token_count = count_tokens(prompt, tokenizer=tokenizer)
-    print(f"\nToken Count: {token_count} tokens")
     
-    # Send the prompt to the chosen LLM
+    # Send the prompt to the chosen LLM via AISuite
     annotated_data = send_prompt(
         prompt=prompt,
         model_name=model_name,
-        use_openai=use_openai,
+        use_provider=use_provider,
         temperature=0,
         max_tokens=1500
     )
@@ -99,3 +85,13 @@ def annotate_with_few_shot_prompt(example_directory: str, target_file_path: str,
     with open('llm_output.csv', mode='a', newline='', encoding='utf-8') as csvfile:
         writer = csv.writer(csvfile)
         writer.writerow([prompt, annotated_data])
+
+'''
+if __name__ == "__main__":
+    annotate_with_few_shot_prompt(
+        example_directory='./examples', 
+        target_file_path='./target.txt', 
+        ontology_path='./privacy_ontology.json',
+        model_name='openai:gpt-4'
+    )
+'''
