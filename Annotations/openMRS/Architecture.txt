@@ -4,9 +4,8 @@ Architecture
 This chapter contains an in-depth view of the architecture of the system. If you don't understand everything on the first reading, don't fret! Understanding how the basic system fits together is the most important thing you need for now.
 
 #Technical Overview
-{#s (A: Collect, Use, Share) (DT:medical information) (P: Functionality, Compliance)
 OpenMRS is a framework built upon Java and other related frameworks. It is based on a modular architecture which consists of a core application and optional modules which provide additional functionality to the core workflows.
-}
+
 
 The key architectural components of the OpenMRS core can be depicted as follows:
 
@@ -23,9 +22,9 @@ The Data Access layer
 This layering isolates various system responsibilities from one another, to improve both system development and maintenance.
 
 #The Data Access layer
-{#s (A: Collect, Use, Share) (DT:medical information) (P: Data Storage, Security)
+
 The Data Access layer is an abstraction layer from the actual data model and its changes. It uses Hibernate as the Object Relational mapping tool, and Liquibase to manage relational database changes in a database-independent way.
-}
+
 
 The relationships between our domain objects and database tables are mapped using a mixture of Hibernate annotations and XML mapping files. The data access layer is exposed to the service layer through interfaces, thereby shielding it from implementation details such as which object relational mapping tool is being used. see openmrs DataModel at openmrs university
 
@@ -35,6 +34,8 @@ The Service layer is responsible for managing the business logic of the applicat
 Spring Aspect Oriented Programming (AOP) is used to provide separate cross cutting functions (for example: authentication, logging).
 Spring Dependency Injection (DI) is used to provide dependencies between components.
 Spring is used to manage transactions in between service layer classes
+
+
 #User Interface layer
 The User Interface layer for the legacy application is built upon Spring MVC, Direct Web Remoting (DWR), JSP and JavaScript. DWR is used for AJAX functionality and it provides the mapping between our Java objects and methods to JavaScript objects and methods respectively. JQuery is used to simplify the interactions with Javascript and the browser. Spring MVC is used to provide the Model-View-Controller design pattern. Our domain objects serve as the Model. We have a mixture of controllers that subclass Spring's SimpleFormControllers and those which use Spring's @Controller annotation. For the new reference application user interface, we no longer use Spring MVC, DWR or JSP, but heavily use Groovy, JQuery, AngularJS, and more.
 
@@ -61,7 +62,7 @@ There are no jsp pages that are accessed directly. If a page's url is /admin/pat
 #Authentication and Authorization
 {#s (A: Collect, Use, Manage) (DT: account information) (P: Security)
 OpenMRS has a very granulated permissions system. Every action is associated with a Privilege, which in turn can be grouped into Roles. Examples of such privileges are "Add Patient", "Update Patient", "Delete Patient", "Add Concept", "Update Concept", and more. A Role can also point to a list of inherited roles. The role inherits all privileges from that inherited role. In this way, hierarchies of roles are possible. A User contains only a collection of Roles, not Privileges. These privileges are enforced in the service layer using AOP annotations. In a way, this also enssures Confidentiality of patients' Data by putting restrictions on the data Access.
-}
+/}
 
 
 #Build Management
