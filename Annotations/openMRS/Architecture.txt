@@ -1,13 +1,12 @@
 <PI>
-{#s (A: Collect, Use, Share, Delete) (DT: Patient Records, Metadata, Transaction Data, User Inputs, Interaction Logs, User Roles, Privileges, Access Logs, Customization Data) (P: Data Storage, Functionality, Security, Compliance, Customization)
-
-OpenMRS Architecture
 
 Architecture
 This chapter contains an in-depth view of the architecture of the system. If you don't understand everything on the first reading, don't fret! Understanding how the basic system fits together is the most important thing you need for now.
 
 #Technical Overview
+{#s (A: Collect, Use, Share) (DT: Patient Records, Transaction Data) (P: Functionality, Compliance)
 OpenMRS is a framework built upon Java and other related frameworks. It is based on a modular architecture which consists of a core application and optional modules which provide additional functionality to the core workflows.
+}
 
 The key architectural components of the OpenMRS core can be depicted as follows:
 
@@ -24,7 +23,9 @@ The Data Access layer
 This layering isolates various system responsibilities from one another, to improve both system development and maintenance.
 
 #The Data Access layer
+{#s (A: Collect, Use, Share) (DT: Patient Records, Transaction Data) (P: Data Storage, Security)
 The Data Access layer is an abstraction layer from the actual data model and its changes. It uses Hibernate as the Object Relational mapping tool, and Liquibase to manage relational database changes in a database-independent way.
+}
 
 The relationships between our domain objects and database tables are mapped using a mixture of Hibernate annotations and XML mapping files. The data access layer is exposed to the service layer through interfaces, thereby shielding it from implementation details such as which object relational mapping tool is being used. see openmrs DataModel at openmrs university
 
@@ -58,7 +59,10 @@ Furthermore, not all files served by the webapp are run through Spring. The /web
 There are no jsp pages that are accessed directly. If a page's url is /admin/patients/index.htm, the jsp will actually reside in /web/WEB-INF/view/admin/patients/index.jsp. This is necessary so that we can do the redirect with the SpringController. Because the file being accessed ends with .htm, the SpringController is invoked by the web server. When the SpringController sees the url, it simply replaces .htm with .jsp and looks for the file in /web/WEB-INF/view/ according to the jspViewResolver bean in openmrs-servlet.xml. If the page being accessed was patient.form, the mapping in the urlMapping bean would have told spring to use the PatientFormController and the patientForm.jsp file.
 
 #Authentication and Authorization
+{#s (A: Collect, Use, Manage) (DT: User Roles, Privileges) (P: Security, Confidentiality)
 OpenMRS has a very granulated permissions system. Every action is associated with a Privilege, which in turn can be grouped into Roles. Examples of such privileges are "Add Patient", "Update Patient", "Delete Patient", "Add Concept", "Update Concept", and more. A Role can also point to a list of inherited roles. The role inherits all privileges from that inherited role. In this way, hierarchies of roles are possible. A User contains only a collection of Roles, not Privileges. These privileges are enforced in the service layer using AOP annotations. In a way, this also enssures Confidentiality of patients' Data by putting restrictions on the data Access.
+}
+
 
 #Build Management
 OpenMRS uses Apache Maven for build management of the OpenMRS core and modules.
